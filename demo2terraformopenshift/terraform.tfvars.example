@@ -1,0 +1,31 @@
+ssh_public_key = "ssh-rsa ..."
+
+subscription_id = "..."
+
+tenant_id = "..."
+
+aad_client_id = "..."
+
+aad_client_secret = ".."
+
+resource_group_name = "ocprg"
+
+key_vault_name = "myKeyVault"
+
+key_vault_resource_group = "myKeyVaultRG"
+
+key_vault_secret = "MMMMMMMM"
+
+openshift_cluster_prefix = "ocp"
+
+openshift_password = "P4ssw0rd1"
+
+openshift_script_path = "/demo2terraformopenshift/scripts"
+
+connection_private_ssh_key_path = "/demo2terraformopenshift/.ssh/id_rsa"
+
+master_instance_count = 1
+
+infra_instance_count = 1
+
+node_instance_count = 1

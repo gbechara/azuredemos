@@ -1,0 +1,12 @@
+**/*.retry
+**/.vs
+**/.vscode
+**/group_vars/all
+**/*.tfstate
+**/*.tfstate.backup
+**/*.tfplan
+**/.terraform.tfstate.lock.info
+**/terraform.tfvars
+**/.terraform
+**/.ssh
+**/*.pwds
