@@ -30,7 +30,7 @@ Once downloaded you can open the `SmartHotel360.WebSite.sln` file, located in th
 
 We have added an ARM template so you can automate the creation of the resources
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fgbechara%2Fazuredemos%2Fmaster%2Fdemo5serverless-sh%2FSmartHotel360-Website%2Fsrc%2FSmartHotel360.WebsiteARM%2Fsmarthote360.website.deployment.json?target=_blank" target='_blank'><img src="Images/deploy-to-azure.png" alt="Deploy to Azure"/></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fgbechara%2Fazuredemos%2Fmaster%2Fdemo5serverless-sh%2FSmartHotel360-Website%2Fsrc%2FSmartHotel360.WebsiteARM%2Fsmarthote360.website.deployment.json?target=_blank" target='_blank'><img src="docs/Images/deploy-to-azure.png" alt="Deploy to Azure"/></a>
 
 ## Running The Website
 
