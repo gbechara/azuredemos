@@ -16,7 +16,7 @@ The first step is to create the needed Azure resources: The Azure Function, the 
 
 To create these resources we have the following ARM template:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMicrosoft%2FSmartHotel360-Website%2Fmaster%2FSource%2FSmartHotel360.WebsiteARM%2Fsmarthote360.website.deployment.json?target=_blank" target='_blank'><img src="Images/deploy-to-azure.png" alt="Deploy to Azure"/></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fgbechara%2Fazuredemos%2Fmaster%2Fdemo5serverless-sh%2FSmartHotel360-Website%2Fsrc%2FSmartHotel360.WebsiteARM%2Fsmarthote360.website.deployment.json?target=_blank" target='_blank'><img src="Images/deploy-to-azure.png" alt="Deploy to Azure"/></a>
 
 Once the resources are created you need to do some manual steps:
 
