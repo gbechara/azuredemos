@@ -1,14 +1,14 @@
 # Azure Functions & Web App Service Demo Setup
 
-In order to run through the [demo scripts in this repo](../DemoScripts) you will need to set up your own environment. 
+In order to run through the [demo scripts in this repo](DemoScripts) you will need to set up your own environment. 
 
 There are two demos that show the power of .NET Core, Visual Studio and Azure. The first one demonstrates the ability to easily develop and debug C# Azure Functions in Visual Studio 2017. This demo shows how the hotel only allows dogs by asking the customer to upload a picture of their pet.
 
 The second demo shows how Application Insights is automatically configured and monitoring the health of your .NET Core apps in Azure App Service. It also shows how to debug production exceptions with the new snapshot debugging. 
 
 In order to show these demos, you need to have the services deployed to your own Azure subscription. The step-by-step demo scripts are available here:
-* [Azure Functions Local Debugging](../DemoScripts/AzureFunctionsNETCoreDebugging.pdf)
-* [App Service Production Debugging & Application Insights](../DemoScripts/ProductionNETCoreDebugging.pdf)
+* [Azure Functions Local Debugging](DemoScripts/AzureFunctionsNETCoreDebugging.pdf)
+* [App Service Production Debugging & Application Insights](DemoScripts/ProductionNETCoreDebugging.pdf)
 
 ## Creating The Azure Resources
 
