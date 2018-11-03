@@ -45,7 +45,7 @@ The file `appsettings.Development.json` contains the settings of the website. By
 
 > If `FakeAuth` is **not set** the Website site uses an Azure Active Directory B2C to enable the logins. Please read "[Enabling B2C logins](docs/B2C.md)" if you want to use B2C logins.
 
-If you want to deploy this application to your own Azure subscription, see [this setup guide](Documents/AzureDeployment.md) for instructions. 
+If you want to deploy this application to your own Azure subscription, see [this setup guide](docs/AzureDeployment.md) for instructions. 
 
 # Running the Pet Checker Azure Function
 
