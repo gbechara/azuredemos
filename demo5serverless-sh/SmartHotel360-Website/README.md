@@ -43,16 +43,16 @@ The file `appsettings.Development.json` contains the settings of the website. By
 * `SettingsUrl`: Url of the configuration endpoint. By default, it uses the public endpoint service. Only change if you are running your own backend services.
 * `FakeAuth`: Contains data to "simulate" the login process. Data is `Name` (name of the user), `UserId` (id of the user), `PicUrl` (url of the user avatar).
 
-> If `FakeAuth` is **not set** the Website site uses an Azure Active Directory B2C to enable the logins. Please read "[Enabling B2C logins](Documents/B2C.md)" if you want to use B2C logins.
+> If `FakeAuth` is **not set** the Website site uses an Azure Active Directory B2C to enable the logins. Please read "[Enabling B2C logins](docs/B2C.md)" if you want to use B2C logins.
 
 If you want to deploy this application to your own Azure subscription, see [this setup guide](Documents/AzureDeployment.md) for instructions. 
 
 # Running the Pet Checker Azure Function
 
-You can [run the Azure Function locally or deploy it to Azure](Documents/AzureFunction.md)
+You can [run the Azure Function locally or deploy it to Azure](docs/AzureFunction.md)
 
 # Demo Scripts
-There is a detailed step-by-step demo script in the [demoscripts](Documents/DemoScripts) folder of this repo that you can use in your own presentations. In order to perform the demos, you will need to deploy the application resources to Azure first.
+There is a detailed step-by-step demo script in the [demoscripts](docs/DemoScripts) folder of this repo that you can use in your own presentations. In order to perform the demos, you will need to deploy the application resources to Azure first.
 
 # Contributing
 
