@@ -9,15 +9,19 @@ using System.Collections.Generic;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 
 namespace PetCheckerFunction
 {
     public static class PetChecker
     {
         [FunctionName("PetChecker")]
-        public static async Task RunPetChecker([CosmosDBTrigger("pets", "checks", ConnectionStringSetting = "constr", CreateLeaseCollectionIfNotExists = true)] IReadOnlyList<Document> document, TraceWriter log)
+        public static async Task RunPetChecker([CosmosDBTrigger("pets", "checks", ConnectionStringSetting = "constr", CreateLeaseCollectionIfNotExists = true)] IReadOnlyList<Document> document,
+           // [SignalR(HubName = "chat")]IAsyncCollector<SignalRMessage> signalRMessages,
+            TraceWriter log)
         {
             var httpClient = new HttpClient();
+            var mymessage = "";
             try
             {
                 foreach (dynamic doc in document)
@@ -38,6 +42,7 @@ namespace PetCheckerFunction
                         log.Info($"--- Image analyzed. It was {(allowed ? string.Empty : "NOT")} approved");
                         doc.IsApproved = allowed;
                         doc.Message = message;
+                        mymessage = message;
                         log.Info($"--- Updating CosmosDb document to have historical data");
                         await UpsertDocument(doc, log);
                         log.Info($"<<< Image in {url} processed!");
@@ -46,6 +51,13 @@ namespace PetCheckerFunction
             }
             finally
             {
+             /*   await signalRMessages.AddAsync(
+                    new SignalRMessage
+                    {
+                        Target = "newMessage",
+                        Arguments = new[] { mymessage }
+                    });
+                log.Info($"--- Finished signaling back");*/
                 httpClient?.Dispose();
             }
         }
