@@ -12,5 +12,8 @@ namespace SmartHotel360.PublicWeb.Models.Settings
         public string CosmosKey { get; set; }
         public string BlobName { get; set; }
         public string BlobKey { get; set; }
+        public string SignalREndpoint { get; set; }
+        public string SignalRAccessKey { get; set; }
+
     }
 }

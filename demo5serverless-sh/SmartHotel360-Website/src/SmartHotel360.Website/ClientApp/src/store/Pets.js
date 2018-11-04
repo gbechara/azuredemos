@@ -54,13 +54,19 @@ export const actionCreators = {
     },
 
     uploadPet: (pet) => async (dispatch, getState) => {
-        const tokenInfo = await requestSignalRToken();
+        //const tokenInfo = await requestSignalRToken();
         const options = {
-            accessTokenFactory: () => tokenInfo.accessKey
+            //accessTokenFactory: () => tokenInfo.accessKey
+            accessTokenFactory: () => settings().petsConfig.signalRAccessKey
         };
 
-        const connection = new signalR.HubConnectionBuilder()
+        /*const connection = new signalR.HubConnectionBuilder()
             .withUrl(tokenInfo.endpoint, options)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();*/
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(settings().petsConfig.signalREndpoint, options)
             .configureLogging(signalR.LogLevel.Information)
             .build();
 
