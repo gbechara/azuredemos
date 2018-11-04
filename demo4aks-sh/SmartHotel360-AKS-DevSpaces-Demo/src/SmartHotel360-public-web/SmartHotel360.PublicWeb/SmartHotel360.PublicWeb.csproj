@@ -6,6 +6,7 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>c8805035-d90b-48c4-88c8-2d087ba54286</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -168,5 +169,7 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1Production_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
