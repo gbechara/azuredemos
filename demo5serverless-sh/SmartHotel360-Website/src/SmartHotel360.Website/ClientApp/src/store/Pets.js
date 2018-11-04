@@ -1,58 +1,29 @@
-import { Reducer } from 'redux';
-import { AppThunkAction } from 'ClientApp/store';
-import { addTask } from 'domain-task';
-
+import * as signalR from '@aspnet/signalr';
+import { settings } from '../Settings';
 const api = `/api/Pets`;
 
-export enum Status {
-    None,
-    Ok,
-    Bad
-}
+export const Status = {
+    None: 1,
+    Ok: 2,
+    Bad: 3
+};
 
 export class PetInfo {
-    public base64: string;
+    constructor(base64) {
+        this.base64 = base64;
+    }
 }
 
-// -----------------
-// STATE - This defines the type of data maintained in the Redux store.
-export interface PetsState {
-    isUploading: boolean;
-    isThinking: boolean;
-    id: string | null;
-    image: string | null;
-    status: PetAcceptedResponse;
-}
-const initialState: PetsState = {
+const initialState = {
     isUploading: false,
     isThinking: false,
     id: null,
     image: null,
-    status: { approved: false, message: '' }
+    approved: false,
+    message: ''
 };
 
-class PetAcceptedResponse {
-    public approved: boolean | null
-    public message: string
-}
-
-// -----------------
-// ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
-// They do not themselves have any side-effects; they just describe something that is going to happen.
-// Use @typeName and isActionType for type detection that works even after serialization/deserialization.
-
-interface InitAction { type: 'INIT_ACTION' }
-interface RequestPetUploadAction { type: 'REQUEST_PET_UPLOAD_ACTION', image: string }
-interface ReceivePetUploadAction { type: 'RECEIVE_PET_UPLOAD_ACTION', id: string }
-interface StartPoolingAction { type: 'START_POOLING_ACTION' }
-interface EndPoolingAction { type: 'END_POOLING_ACTION', status: PetAcceptedResponse }
-
-
-type KnownAction = InitAction | RequestPetUploadAction | ReceivePetUploadAction | StartPoolingAction | EndPoolingAction;
-
-// ---------------
-// FUNCTIONS - Our functions to reuse in this code.
-function postImage(pet: PetInfo): Promise<string> {
+function postImage(pet) {
     let fetchTask = fetch(api, {
         method: 'POST',
         headers: {
@@ -60,103 +31,68 @@ function postImage(pet: PetInfo): Promise<string> {
         },
         body: JSON.stringify(pet)
     })
-        .then(response => response.json() as Promise<string>)
+    .then(response => response.json());
 
-    addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
     return fetchTask;
 }
 
-const maximumAttempts = 100;
-const differenceTime = 400;
+function requestSignalRToken() {
+    let fetchTask = fetch(`${settings().petsConfig.api}/api/SignalRInfo`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json());
 
-let startTime: number;
-let isGettingInfo: boolean;
-let attempts: number;
-let frame: any;
-
-function recursiveGet(id: string, resolve: any) {
-    let now = Date.now();
-    if (!isGettingInfo && (now - startTime > differenceTime)) {
-        isGettingInfo = true;
-        let fetchTask = fetch(api + `?identifier=${id}`)
-            .then(response => response.json() as Promise<PetAcceptedResponse>)
-            .then(status => {
-                isGettingInfo = false;
-
-                if (status.message !== '') {
-                    cancelAnimationFrame(frame);
-                    resolve(status);
-                } else {
-                    attempts++;
-                    if (attempts >= maximumAttempts) {
-                        cancelAnimationFrame(frame);
-                        resolve(status);
-                    }
-                }
-
-                startTime = now;
-            })
-        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-    }
-
-    frame = requestAnimationFrame(() => recursiveGet(id, resolve));
+    return fetchTask;
 }
 
-function getStatus(id: string): Promise<PetAcceptedResponse> {
-    startTime = Date.now();
-    isGettingInfo = false;
-    attempts = 0;
-
-    return new Promise(resolve => {
-        frame = requestAnimationFrame(() => recursiveGet(id, resolve));
-    });
-}
-
-// ----------------
-// ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
-// They don't directly mutate state, but they can have external side-effects (such as loading data).
 export const actionCreators = {
-    init: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'INIT_ACTION' });
+    init: () => (dispatch, getState) => {
+        dispatch({ type: 'INIT_ACTION'});
     },
 
-    uploadPet: (pet: PetInfo): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        postImage(pet)
-            .then(id => {
-                dispatch({ type: 'RECEIVE_PET_UPLOAD_ACTION', id: id });
+    uploadPet: (pet) => async (dispatch, getState) => {
+        const tokenInfo = await requestSignalRToken();
+        const options = {
+            accessTokenFactory: () => tokenInfo.accessKey
+        };
 
-                // Now start to get status
-                dispatch({ type: 'START_POOLING_ACTION' });
-                getStatus(id).then(status => {
-                    dispatch({ type: 'END_POOLING_ACTION', status: status });
-                });
-            });
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(tokenInfo.endpoint, options)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        connection.on('ProcessDone', (data) => {
+            dispatch({ type: 'END_SOCKET', approved: data.accepted, message: data.message });
+        });
+        connection.onclose(() => console.log('server closed'));
+
         dispatch({ type: 'REQUEST_PET_UPLOAD_ACTION', image: pet.base64 });
+
+        const id = await postImage(pet);
+        dispatch({ type: 'RECEIVE_PET_UPLOAD_ACTION', id: id });
+  
+        dispatch({ type: 'START_SOCKET' });
+        connection.start().catch(console.error);
     }
 };
 
-// ----------------
-// REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
-export const reducer: Reducer<PetsState> = (state: PetsState, action: KnownAction) => {
+export const reducer = (state, action) => {
     switch (action.type) {
         case 'INIT_ACTION':
             return {
-                ...state, isUploading: false, isThinking: false, image: null, status: { approved: null, message: '' }
-            };
+                ...state, isUploading: false, isThinking: false, image: null, approved: null, message: ''};
         case 'REQUEST_PET_UPLOAD_ACTION':
-            return { ...state, isUploading: true, isThinking: false, image: action.image, status: { approved: null, message: '' } };
+            return { ...state, isUploading: true, isThinking: false, image: action.image, approved: null, message: '' };
         case 'RECEIVE_PET_UPLOAD_ACTION':
             return { ...state, isUploading: false, isThinking: false, id: action.id };
-        case 'START_POOLING_ACTION':
+        case 'START_SOCKET':
             return { ...state, isUploading: false, isThinking: true };
-        case 'END_POOLING_ACTION':
-            return { ...state, isUploading: false, isThinking: false, image: null, status: action.status };
+        case 'END_SOCKET':
+            return { ...state, isUploading: false, isThinking: false, image: null, approved: action.approved, message: action.message };
         default:
-            // the following line guarantees that every action in the KnownAction union has been covered by a case above
-            const exhaustiveCheck: never = action;
+            return state || { ...initialState };
     }
-
-    // For unrecognized actions (or in cases where actions have no effect), must return the existing state
-    //  (or default initial state if none was supplied)
-    return state || { ...initialState };
 };
