@@ -1,4 +1,6 @@
 import * as signalR from '@aspnet/signalr';
+import * as axios from 'axios';
+
 import { settings } from '../Settings';
 const api = `/api/Pets`;
 
@@ -37,16 +39,46 @@ function postImage(pet) {
 }
 
 function requestSignalRToken() {
+    /*let fetchTask = fetch(`${settings().petsConfig.api}/api/SignalRInfo`, {
+         method: 'GET'
+    })
+    .then(response => response.json());*/
+
     let fetchTask = fetch(`${settings().petsConfig.api}/api/SignalRInfo`, {
         method: 'POST',
+        mode: 'cors',
         headers: {
-            'Content-Type': 'application/json'
+            'Accept-Encoding': 'deflate'
         }
     })
-    .then(response => response.json());
+        .then(response => response.json());
+
+    /*let fetchTask = fetch(`${settings().petsConfig.api}/api/SignalRInfo`, {
+        method: 'GET',
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        }
+    })
+        .then(response => response.json());*/
+
+    /*let fetchTask = fetch(`${settings().petsConfig.api}/api/SignalRInfo`)
+        .then(response => response.json());*/
+
+    /*let fetchTask = axios.post(`${settings().petsConfig.api}/api/SignalRInfo`, null, getAxiosConfig())
+        .then(response => response.json());*/
 
     return fetchTask;
 }
+
+function getAxiosConfig() {
+    const config = {
+        headers: {
+            'Access-Control-Allow-Origin' : '*'
+        }
+    };
+    return config;
+}
+
 
 export const actionCreators = {
     init: () => (dispatch, getState) => {
@@ -54,7 +86,10 @@ export const actionCreators = {
     },
 
     uploadPet: (pet) => async (dispatch, getState) => {
+        //console.log('avant appel de requestSignalRToken');
         //const tokenInfo = await requestSignalRToken();
+        //console.log('retour de requestSignalRToken');
+        //console.log(tokenInfo.accessKey);
         const options = {
             //accessTokenFactory: () => tokenInfo.accessKey
             accessTokenFactory: () => settings().petsConfig.signalRAccessKey
@@ -62,9 +97,10 @@ export const actionCreators = {
 
         /*const connection = new signalR.HubConnectionBuilder()
             .withUrl(tokenInfo.endpoint, options)
-            .configureLogging(signalR.LogLevel.Information)
+            .configureLogging(signalR.LogLevel.Debug)
             .build();*/
 
+        
         const connection = new signalR.HubConnectionBuilder()
             .withUrl(settings().petsConfig.signalREndpoint, options)
             .configureLogging(signalR.LogLevel.Information)
@@ -74,6 +110,9 @@ export const actionCreators = {
             dispatch({ type: 'END_SOCKET', approved: data.accepted, message: data.message });
         });
         connection.onclose(() => console.log('server closed'));
+
+        //connection.logging = true;
+
 
         dispatch({ type: 'REQUEST_PET_UPLOAD_ACTION', image: pet.base64 });
 

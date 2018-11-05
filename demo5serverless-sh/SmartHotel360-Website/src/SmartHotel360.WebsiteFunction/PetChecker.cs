@@ -10,18 +10,28 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace PetCheckerFunction
 {
     public static class PetChecker
     {
+
+        [FunctionName("SignalRInfo")]
+        public static SignalRConnectionInfo GetSignalRInfo(
+           [HttpTrigger(AuthorizationLevel.Anonymous)] Microsoft.AspNetCore.Http.HttpRequest req,
+           [SignalRConnectionInfo(HubName = "chat")] SignalRConnectionInfo connectionInfo)
+        {
+            return connectionInfo;
+        }
+
+
         [FunctionName("PetChecker")]
         public static async Task RunPetChecker([CosmosDBTrigger("pets", "checks", ConnectionStringSetting = "constr", CreateLeaseCollectionIfNotExists = true)] IReadOnlyList<Document> document,
-           // [SignalR(HubName = "chat")]IAsyncCollector<SignalRMessage> signalRMessages,
+           [SignalR(HubName = "chat")]IAsyncCollector<SignalRMessage> signalRMessages,
             TraceWriter log)
         {
             var httpClient = new HttpClient();
-            var mymessage = "";
             try
             {
                 foreach (dynamic doc in document)
@@ -42,22 +52,21 @@ namespace PetCheckerFunction
                         log.Info($"--- Image analyzed. It was {(allowed ? string.Empty : "NOT")} approved");
                         doc.IsApproved = allowed;
                         doc.Message = message;
-                        mymessage = message;
                         log.Info($"--- Updating CosmosDb document to have historical data");
                         await UpsertDocument(doc, log);
                         log.Info($"<<< Image in {url} processed!");
+                        await signalRMessages.AddAsync(
+                            new SignalRMessage
+                            {
+                                Target = "ProcessDone",
+                                Arguments = new[] { doc }
+                            });
+                        log.Info($"--- Finished signaling back with doc");
                     }
                 }
             }
             finally
             {
-             /*   await signalRMessages.AddAsync(
-                    new SignalRMessage
-                    {
-                        Target = "newMessage",
-                        Arguments = new[] { mymessage }
-                    });
-                log.Info($"--- Finished signaling back");*/
                 httpClient?.Dispose();
             }
         }
