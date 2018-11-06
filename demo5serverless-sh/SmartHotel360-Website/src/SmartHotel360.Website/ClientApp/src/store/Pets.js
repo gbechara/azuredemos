@@ -46,16 +46,16 @@ function requestSignalRToken() {
 
     let fetchTask = fetch(`${settings().petsConfig.api}/api/SignalRInfo`, {
         method: 'POST',
-        mode: 'cors',
         headers: {
-            'Accept-Encoding': 'deflate'
+            'Accept': 'application/json'
+         //   'Content-Type': 'application/json'
         }
     })
         .then(response => response.json());
 
     /*let fetchTask = fetch(`${settings().petsConfig.api}/api/SignalRInfo`, {
         method: 'GET',
-        headers: {
+        headers: 
             'Access-Control-Allow-Origin': '*'
         }
     })
@@ -87,31 +87,38 @@ export const actionCreators = {
 
     uploadPet: (pet) => async (dispatch, getState) => {
         //console.log('avant appel de requestSignalRToken');
-        //const tokenInfo = await requestSignalRToken();
+        const tokenInfo = await requestSignalRToken();
         //console.log('retour de requestSignalRToken');
         //console.log(tokenInfo.accessKey);
         const options = {
-            //accessTokenFactory: () => tokenInfo.accessKey
-            accessTokenFactory: () => settings().petsConfig.signalRAccessKey
+            accessTokenFactory: () => tokenInfo.accessKey
+            //accessTokenFactory: () => settings().petsConfig.signalRAccessKey
         };
 
-        /*const connection = new signalR.HubConnectionBuilder()
+        const connection = new signalR.HubConnectionBuilder()
             .withUrl(tokenInfo.endpoint, options)
             .configureLogging(signalR.LogLevel.Debug)
-            .build();*/
-
-        
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl(settings().petsConfig.signalREndpoint, options)
-            .configureLogging(signalR.LogLevel.Information)
             .build();
 
+        
+        /*const connection = new signalR.HubConnectionBuilder()
+            .withUrl(settings().petsConfig.signalREndpoint, options)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();*/
+
         connection.on('ProcessDone', (data) => {
-            dispatch({ type: 'END_SOCKET', approved: data.accepted, message: data.message });
+            dispatch({ type: 'END_SOCKET', approved: data.IsApproved, message: data.Message });
         });
+
+        //var logmsg = logmsg.concat('Suite a END_SOCKET ',approved,' ',message));
+        //console.log(logmsg);
+        //console.log(approved);
+        //console.log(message);
+        console.log('Suite a END_SOCKET');  
+
         connection.onclose(() => console.log('server closed'));
 
-        //connection.logging = true;
+        connection.logging = true;
 
 
         dispatch({ type: 'REQUEST_PET_UPLOAD_ACTION', image: pet.base64 });
