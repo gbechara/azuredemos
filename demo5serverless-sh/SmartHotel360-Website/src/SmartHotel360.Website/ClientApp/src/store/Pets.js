@@ -114,7 +114,7 @@ export const actionCreators = {
         //console.log(logmsg);
         //console.log(approved);
         //console.log(message);
-        console.log('Suite a END_SOCKET');  
+        console.log('Event END_SOCKET');  
 
         connection.onclose(() => console.log('server closed'));
 
