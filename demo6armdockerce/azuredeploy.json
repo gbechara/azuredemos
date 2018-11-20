@@ -658,14 +658,14 @@
         "lbSSHPublicIPAddressName": "[concat(variables('basePrefix'), '-', variables('lbSSHName'), '-public-ip')]", 
         "linuxImageOffer": "CentOS", 
         "linuxImagePublisher": "Openlogic", 
+        "linuxImageSku": "7.4", 
+        "linuxImageVersion": "latest",
         "linuxImageReference": {
             "offer": "[variables('linuxImageOffer')]", 
             "publisher": "[variables('linuxImagePublisher')]", 
             "sku": "[variables('linuxImageSku')]", 
             "version": "[variables('linuxImageVersion')]"
         }, 
-        "linuxImageSku": "7.4", 
-        "linuxImageVersion": "latest", 
         "linuxWorkerCount": "[parameters('linuxWorkerCount')]", 
         "linuxWorkerVMNamePrefix": "swarm-worker", 
         "linuxWorkerVMSSName": "swarm-worker-vmss", 
