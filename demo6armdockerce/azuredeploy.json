@@ -664,7 +664,7 @@
             "sku": "[variables('linuxImageSku')]", 
             "version": "[variables('linuxImageVersion')]"
         }, 
-        "linuxImageSku": "7.5", 
+        "linuxImageSku": "7.4", 
         "linuxImageVersion": "latest", 
         "linuxWorkerCount": "[parameters('linuxWorkerCount')]", 
         "linuxWorkerVMNamePrefix": "swarm-worker", 
