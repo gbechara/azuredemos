@@ -319,12 +319,7 @@
                 "storageLoop"
             ], 
             "location": "[resourceGroup().location]", 
-            "name": "[variables('managerVMSSName')]", 
-            "plan": {
-                "name": "[variables('linuxImageSku')]", 
-                "product": "[variables('linuxImageOffer')]", 
-                "publisher": "[variables('linuxImagePublisher')]"
-            }, 
+            "name": "[variables('managerVMSSName')]",  
             "properties": {
                 "overprovision": false, 
                 "upgradePolicy": {
@@ -417,11 +412,6 @@
             ], 
             "location": "[resourceGroup().location]", 
             "name": "[variables('linuxWorkerVMSSName')]", 
-            "plan": {
-                "name": "[variables('linuxImageSku')]", 
-                "product": "[variables('linuxImageOffer')]", 
-                "publisher": "[variables('linuxImagePublisher')]"
-            }, 
             "properties": {
                 "overprovision": false, 
                 "upgradePolicy": {
@@ -657,9 +647,9 @@
         "lbSSHName": "externalSSHLoadBalancer", 
         "lbSSHPublicIPAddressName": "[concat(variables('basePrefix'), '-', variables('lbSSHName'), '-public-ip')]", 
         "linuxImageOffer": "CentOS", 
-        "linuxImagePublisher": "Rogue Wave Software", 
-        "linuxImageSku": "7.5", 
-        "linuxImageVersion": "latest",
+        "linuxImagePublisher": "Openlogic", 
+        "linuxImageSku": "7.4", 
+        "linuxImageVersion": "latest", 
         "linuxImageReference": {
             "offer": "[variables('linuxImageOffer')]", 
             "publisher": "[variables('linuxImagePublisher')]", 
