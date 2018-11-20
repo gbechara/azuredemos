@@ -321,9 +321,9 @@
             "location": "[resourceGroup().location]", 
             "name": "[variables('managerVMSSName')]", 
             "plan": {
-                "name": "[variables('7.5')]", 
-                "product": "[variables('CentOS')]", 
-                "publisher": "[variables('Openlogic')]"
+                "name": "[variables('linuxImageSku')]", 
+                "product": "[variables('linuxImageOffer')]", 
+                "publisher": "[variables('linuxImagePublisher')]"
             }, 
             "properties": {
                 "overprovision": false, 
