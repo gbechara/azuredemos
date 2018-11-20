@@ -657,8 +657,8 @@
         "lbSSHName": "externalSSHLoadBalancer", 
         "lbSSHPublicIPAddressName": "[concat(variables('basePrefix'), '-', variables('lbSSHName'), '-public-ip')]", 
         "linuxImageOffer": "CentOS", 
-        "linuxImagePublisher": "Openlogic", 
-        "linuxImageSku": "7.4", 
+        "linuxImagePublisher": "Rogue Wave Software", 
+        "linuxImageSku": "7.5", 
         "linuxImageVersion": "latest",
         "linuxImageReference": {
             "offer": "[variables('linuxImageOffer')]", 
